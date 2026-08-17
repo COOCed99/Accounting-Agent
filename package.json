@@ -15,7 +15,8 @@
     "dev:client": "npm run dev --prefix client",
     "build": "npm run build --prefix client",
     "test": "node --test server/engine/*.test.js",
-    "export:fixtures": "node server/db/export-fixtures.js"
+    "export:fixtures": "node server/db/export-fixtures.js",
+    "seed:demo": "node server/db/seed-demo.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.7.0",
