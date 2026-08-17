@@ -1,0 +1,436 @@
+<title>SHP Call Integration Review</title>
+<style>
+  :root {
+    --ground:#F2F5F3; --surface:#FFFFFF; --surface-2:#E9EEEB;
+    --ink:#141A19; --ink-2:#46534F; --ink-3:#6E7C78; --rule:#D3DBD7;
+    --accent:#0F6E63; --accent-soft:#DCEBE7;
+    --critical:#9E2B1C; --critical-soft:#F6E3DF;
+    --warn:#8A6208; --warn-soft:#F6EDD9;
+    --info:#34557A; --info-soft:#E1E9F2;
+    --font-display: ui-serif, Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#0D1312; --surface:#141C1A; --surface-2:#1D2725;
+      --ink:#E7ECE9; --ink-2:#A9B6B2; --ink-3:#7E8C88; --rule:#2A3733;
+      --accent:#46B7A6; --accent-soft:#14312D;
+      --critical:#E4897A; --critical-soft:#331914;
+      --warn:#DFB25C; --warn-soft:#2E2413;
+      --info:#8DB2D8; --info-soft:#172533;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#0D1312; --surface:#141C1A; --surface-2:#1D2725;
+    --ink:#E7ECE9; --ink-2:#A9B6B2; --ink-3:#7E8C88; --rule:#2A3733;
+    --accent:#46B7A6; --accent-soft:#14312D;
+    --critical:#E4897A; --critical-soft:#331914;
+    --warn:#DFB25C; --warn-soft:#2E2413;
+    --info:#8DB2D8; --info-soft:#172533;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--font-ui); font-size:16px; line-height:1.55;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap { max-width:52rem; margin:0 auto; padding:2rem 1.15rem 5rem; }
+
+  /* ---- masthead ---- */
+  .masthead { display:flex; flex-direction:column; gap:.9rem; padding-bottom:1.5rem; border-bottom:2px solid var(--ink); }
+  .eyebrow {
+    font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); font-weight:650;
+  }
+  h1 {
+    font-family:var(--font-display); font-weight:600;
+    font-size:clamp(1.9rem,6vw,2.9rem); line-height:1.1; margin:0;
+    text-wrap:balance; letter-spacing:-.01em;
+  }
+  .standfirst { margin:0; color:var(--ink-2); font-size:1.02rem; max-width:44ch; }
+  .docline { display:flex; flex-wrap:wrap; gap:.4rem .9rem; font-size:.8rem; color:var(--ink-3); }
+  .docline span { display:inline-flex; gap:.35rem; }
+  .docline b { color:var(--ink-2); font-weight:600; }
+
+  /* ---- callout ---- */
+  .callout {
+    margin:1.75rem 0; padding:1.1rem 1.15rem; background:var(--surface);
+    border:1px solid var(--rule); border-left:4px solid var(--warn); border-radius:2px;
+  }
+  .callout h2 { font-family:var(--font-ui); font-size:.95rem; margin:0 0 .5rem; letter-spacing:-.005em; }
+  .callout p { margin:0 0 .6rem; font-size:.92rem; color:var(--ink-2); }
+  .callout p:last-child { margin-bottom:0; }
+  .searched { list-style:none; margin:.6rem 0; padding:0; display:flex; flex-direction:column; gap:.3rem; font-size:.88rem; color:var(--ink-2); }
+  .searched li { display:flex; gap:.55rem; }
+  .searched b { color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums; }
+
+  /* ---- tally ---- */
+  .tally { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin:1.75rem 0 2.5rem; }
+  .tile { background:var(--surface); border:1px solid var(--rule); border-radius:2px; padding:.85rem .9rem; display:flex; flex-direction:column; gap:.15rem; }
+  .tile-n { font-size:1.85rem; font-weight:660; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+  .tile-l { font-size:.72rem; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); font-weight:600; }
+  .t-crit .tile-n { color:var(--critical); }
+  .t-warn .tile-n { color:var(--warn); }
+  .t-info .tile-n { color:var(--info); }
+
+  /* ---- sections ---- */
+  section { margin-bottom:3rem; }
+  .sec-head { display:flex; align-items:baseline; gap:.7rem; margin-bottom:.4rem; padding-bottom:.5rem; border-bottom:1px solid var(--rule); }
+  .sec-head h2 { font-family:var(--font-display); font-weight:600; font-size:1.4rem; margin:0; letter-spacing:-.01em; }
+  .sec-count { font-size:.78rem; color:var(--ink-3); font-variant-numeric:tabular-nums; margin-left:auto; white-space:nowrap; }
+  .sec-intro { margin:.7rem 0 1.4rem; color:var(--ink-2); font-size:.94rem; }
+
+  /* ---- findings ---- */
+  .finding { background:var(--surface); border:1px solid var(--rule); border-left:3px solid var(--rule); border-radius:2px; padding:1rem 1.05rem; margin-bottom:.85rem; }
+  .finding.crit { border-left-color:var(--critical); }
+  .finding.warn { border-left-color:var(--warn); }
+  .finding.info { border-left-color:var(--info); }
+  .f-top { display:flex; align-items:center; gap:.55rem; flex-wrap:wrap; margin-bottom:.45rem; }
+  .f-id { font-family:var(--font-mono); font-size:.76rem; color:var(--ink-3); font-weight:600; }
+  .chip { font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700; padding:.14rem .42rem; border-radius:2px; white-space:nowrap; }
+  .chip.crit { background:var(--critical-soft); color:var(--critical); }
+  .chip.warn { background:var(--warn-soft); color:var(--warn); }
+  .chip.info { background:var(--info-soft); color:var(--info); }
+  .f-title { font-size:1.02rem; font-weight:640; margin:0 0 .45rem; line-height:1.35; letter-spacing:-.005em; text-wrap:balance; }
+  .f-body { margin:0; font-size:.93rem; color:var(--ink-2); }
+  .f-body + .f-body { margin-top:.5rem; }
+  .f-body strong { color:var(--ink); font-weight:620; }
+  code { font-family:var(--font-mono); font-size:.86em; background:var(--surface-2); padding:.08em .3em; border-radius:2px; color:var(--ink); overflow-wrap:break-word; }
+
+  .sources { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-top:.8rem; }
+  .sources.two { grid-template-columns:repeat(2,1fr); }
+  .src { background:var(--surface-2); border-radius:2px; padding:.55rem .6rem; display:flex; flex-direction:column; gap:.25rem; min-width:0; }
+  .src-l { font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; font-weight:700; color:var(--ink-3); }
+  .src-t { font-size:.83rem; color:var(--ink-2); line-height:1.4; overflow-wrap:break-word; }
+  .src.authority .src-l { color:var(--accent); }
+
+  .ask { margin-top:.75rem; padding-top:.6rem; border-top:1px dashed var(--rule); font-size:.89rem; color:var(--ink); display:flex; gap:.5rem; }
+  .ask-l { font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; font-weight:700; color:var(--accent); padding-top:.25rem; white-space:nowrap; }
+
+  /* ---- close ---- */
+  .close { border-top:2px solid var(--ink); padding-top:1.4rem; }
+  .close h2 { font-family:var(--font-display); font-size:1.3rem; margin:0 0 .8rem; font-weight:600; }
+  ol.next { margin:0; padding-left:1.3rem; display:flex; flex-direction:column; gap:.55rem; font-size:.94rem; color:var(--ink-2); }
+  ol.next strong { color:var(--ink); font-weight:620; }
+  footer { margin-top:2.5rem; font-size:.78rem; color:var(--ink-3); }
+
+  @media (max-width:640px) {
+    .tally { grid-template-columns:1fr; }
+    .sources, .sources.two { grid-template-columns:1fr; }
+    .sec-count { width:100%; margin-left:0; }
+  }
+  @media (prefers-reduced-motion:reduce) { * { animation:none !important; transition:none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Requirements reconciliation</div>
+    <h1>SHP Call Integration Review</h1>
+    <p class="standfirst">Twenty-four items where the pop-up mock-ups, the property mapping, and the live HubSpot portal disagree with each other.</p>
+    <div class="docline">
+      <span><b>Sources</b> Call Integration Property Details.xlsx · Popup and Workflow.pdf</span>
+      <span><b>Reviewed</b> 17 Aug 2026</span>
+    </div>
+  </header>
+
+  <div class="callout">
+    <h2>Pedro's version is not in this review — I could not find it</h2>
+    <p>You asked me to reconcile these two documents against what Pedro sent. Nothing from Pedro on this subject exists in any system I can reach, so every finding below is a comparison of the two attached documents against each other and against the portal's own property list.</p>
+    <ul class="searched">
+      <li><b>Gmail</b> — including Sent and Trash; no HubSpot, call pop-up, ticket, or pipeline mail from <code>paguilar@shpdata.com</code>. His last email to you is 21 Apr 2026, about CRM mailboxes in the SERVICE environment. Nothing in 90 days.</li>
+      <li><b>Drive</b> — no call-integration or call-center file; nothing shared with you since June except an unrelated UGC Ads folder.</li>
+      <li><b>Outlook &amp; Teams</b> — no results for Pedro; Teams holds only RingCentral bot cards from 2024.</li>
+    </ul>
+    <p>If he sent it by text, inside SHP's own HubSpot, or to an address outside these accounts, forward it over and I will run the same pass against it — the register below is built so his version can be diffed item by item.</p>
+  </div>
+
+  <div class="tally">
+    <div class="tile t-crit">
+      <div class="tile-n">7</div>
+      <div class="tile-l">Will not build as written</div>
+    </div>
+    <div class="tile t-warn">
+      <div class="tile-n">8</div>
+      <div class="tile-l">Documents contradict</div>
+    </div>
+    <div class="tile t-info">
+      <div class="tile-n">9</div>
+      <div class="tile-l">Missing or unspecified</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <h2>Read-only properties</h2>
+      <span class="sec-count">Items 1–7</span>
+    </div>
+    <p class="sec-intro">The workbook's second tab, <code>Ref-ALL HubSpot Call Properties</code>, is an export of the 49 call properties as they actually exist in the portal, and its <em>Read only value</em> column is the authority here. Seven properties the spec asks the integration to write cannot be written. These are hard stops, not preferences — the API rejects them.</p>
+
+    <div class="finding crit">
+      <div class="f-top"><span class="f-id">01</span><span class="chip crit">Blocker</span></div>
+      <p class="f-title">The voicemail flag cannot be set by the integration</p>
+      <p class="f-body">This one is stated as an explicit instruction in the workflow, so it will fail loudly on the first voicemail. The flag is derived by HubSpot from the call's own voicemail data.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">PDF workflow</span><span class="src-t">"If VM left, set 'Voicemail Available' property on Call Activity to 'Yes'"</span></div>
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">Voicemail available · <code>hs_call_has_voicemail</code> · enumeration</span></div>
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t">Read only value: <strong>True</strong>. HubSpot defined. Fill rate 0.9961</span></div>
+      </div>
+      <div class="ask"><span class="ask-l">Resolve</span><span>Drop the write and let HubSpot derive it, or carry the flag in a custom property SHP owns.</span></div>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-top"><span class="f-id">02</span><span class="chip crit">Blocker</span></div>
+      <p class="f-title">Record source cannot be forced to "Integration"</p>
+      <p class="f-body">Record source describes <em>how</em> a record was created and HubSpot stamps it from the creating credential. A call created through a private app is already labelled as integration-sourced; the instruction to set the value is both impossible and unnecessary.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">"Set property value to 'Integration' (Internal value name: INTEGRATION)"</span></div>
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t"><code>hs_object_source_label</code> · Read only value: <strong>True</strong> · HubSpot defined</span></div>
+        <div class="src"><span class="src-l">Effect</span><span class="src-t">No action needed if calls are created via a private app token</span></div>
+      </div>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-top"><span class="f-id">03</span><span class="chip crit">Blocker</span></div>
+      <p class="f-title">Dynamics "Call From" is mapped to a read-only nickname field</p>
+      <p class="f-body">The migration maps the Dynamics <em>Call From</em> field onto the caller's display name. That property is read-only and currently empty across the portal, so the name will not land.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">Call From → From Number Name · <code>hs_call_from_number_nickname</code></span></div>
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t">Read only value: <strong>True</strong> · Fill rate <strong>0</strong></span></div>
+        <div class="src"><span class="src-l">Note</span><span class="src-t"><code>hs_call_to_number_nickname</code> has the same constraint</span></div>
+      </div>
+      <div class="ask"><span class="ask-l">Resolve</span><span>Caller name belongs on the associated contact, not on the call.</span></div>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-top"><span class="f-id">04</span><span class="chip crit">Blocker</span></div>
+      <p class="f-title">"The user who logged the call" cannot be recorded where the spec puts it</p>
+      <p class="f-body">The mapping note against <em>Activity created by</em> reads "The User that logged the call in the pop-up integration". That property is read-only and will resolve to the integration user, not the rep — so every call will appear to have been logged by the connector.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">Activity created by · <code>hs_created_by</code> · "The User that logged the call in the pop-up integration"</span></div>
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t">Read only value: <strong>True</strong> · HubSpot defined</span></div>
+        <div class="src"><span class="src-l">Works instead</span><span class="src-t"><code>hubspot_owner_id</code> (Activity assigned to) is writable</span></div>
+      </div>
+      <div class="ask"><span class="ask-l">Resolve</span><span>Set the rep as activity owner and treat "created by" as the connector's own footprint.</span></div>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-top"><span class="f-id">05</span><span class="chip crit">Blocker</span></div>
+      <p class="f-title">Inbound answer status is calculated, not assignable</p>
+      <p class="f-body">The mapping carries this as a stored property to populate from the phone system. HubSpot computes it, and it is empty portal-wide today.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">Inbound Call Answer Status · <code>hs_inbound_call_answer_status</code></span></div>
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t">Read only: <strong>True</strong> · Calculated: <strong>True</strong> · Fill rate <strong>0</strong></span></div>
+        <div class="src"><span class="src-l">Consequence</span><span class="src-t">Answered vs unanswered must be driven off <code>hs_call_status</code> instead</span></div>
+      </div>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-top"><span class="f-id">06</span><span class="chip crit">Blocker</span></div>
+      <p class="f-title">Five more mapped properties are read-only or calculated</p>
+      <p class="f-body">Each of these appears in the backend tracking block as though the integration or the migration will populate it: <code>hs_call_has_transcript</code>, <code>hs_voicemail_count</code> (also calculated), <code>hs_call_summary</code>, <code>hubspot_team_id</code>, and <code>hs_call_location</code> — whose four values are additionally flagged HIDDEN and READ-ONLY in the portal.</p>
+      <p class="f-body">The system-audit fields <code>hs_createdate</code>, <code>hs_lastmodifieddate</code>, <code>hs_created_by_user_id</code> and <code>hs_updated_by_user_id</code> are read-only too. That is fine if they are being <em>read</em> for reporting, but the sheet maps them <em>from</em> Dynamics Created On / Modified On / Created by / Modified by, which reads as an intent to write history across. Historical audit stamps cannot be preserved on migrated calls.</p>
+      <div class="sources two">
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t">All nine carry Read only value: True</span></div>
+        <div class="src"><span class="src-l">Decide</span><span class="src-t">If Dynamics audit history must survive, it needs custom properties</span></div>
+      </div>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-top"><span class="f-id">07</span><span class="chip crit">Blocker</span></div>
+      <p class="f-title">The one custom property in the mapping does not exist yet</p>
+      <p class="f-body"><code>dynamics_call_reason</code> is the only non-HubSpot property in the call mapping, and it is absent from the 49-property portal export — so it has not been created. Separately, its type is wrong for its content: it is specified as single-line text to hold what the sheet itself calls "the Dynamics phone call entity, Call Reason <strong>drop down</strong>". Text will accept any spelling and cannot be reported on cleanly.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">Dynamics Call Reason · <code>dynamics_call_reason</code> · single-line text</span></div>
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t">Not present. All 49 exported properties are HubSpot defined</span></div>
+        <div class="src"><span class="src-l">Recommend</span><span class="src-t">Create as a dropdown seeded from the Dynamics option set</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Where the two documents contradict</h2>
+      <span class="sec-count">Items 8–15</span>
+    </div>
+    <p class="sec-intro">These are cases where the workbook and the mock-up deck give different answers to the same question. Each needs one ruling before build, and each is the kind of thing that quietly ships wrong.</p>
+
+    <div class="finding warn">
+      <div class="f-top"><span class="f-id">08</span><span class="chip warn">Conflict</span></div>
+      <p class="f-title">Does a direct-extension call create a ticket?</p>
+      <p class="f-body">The workbook is explicit that it must not. The mock-ups state ticket creation unconditionally, in the header of both the known-caller and unknown-caller pages, and the workflow's unanswered branch also creates a ticket with no line-type condition attached. This is the single highest-impact disagreement in the set: get it wrong toward the PDF and every internal desk-to-desk call opens a support ticket.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">"For Support line(s) = create ticket. If direct extension dial = Do not create ticket"</span></div>
+        <div class="src"><span class="src-l">PDF mock-ups</span><span class="src-t">"Call Activity automatically creates a Support Ticket, and all known associations are then associated to that Support Ticket"</span></div>
+        <div class="src"><span class="src-l">Agreed part</span><span class="src-t">Both agree the ticket <em>section</em> of the pop-up hides on a direct dial</span></div>
+      </div>
+      <div class="ask"><span class="ask-l">Ask Pedro</span><span>Confirm the workbook rule is correct: tickets only from support lines.</span></div>
+    </div>
+
+    <div class="finding warn">
+      <div class="f-top"><span class="f-id">09</span><span class="chip warn">Conflict</span></div>
+      <p class="f-title">Activity date is defined three different ways</p>
+      <p class="f-body">One writable timestamp, three incompatible definitions across the two files. Duration reporting and any "time to answer" metric depend on which one is chosen.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX backend</span><span class="src-t">"HubSpot defines this as the date and time the call was <strong>logged</strong>"</span></div>
+        <div class="src"><span class="src-l">XLSX pop-up</span><span class="src-t">Actual Start → "the Activity date/time stamp would be the <strong>start of the call</strong>"</span></div>
+        <div class="src"><span class="src-l">PDF workflow</span><span class="src-t">"Display Activity Date as Date/Timestamp from when the call was <strong>answered</strong>"</span></div>
+      </div>
+      <div class="ask"><span class="ask-l">Recommend</span><span>Use call start for <code>hs_timestamp</code> so inbound and outbound are measured the same way, and derive answer time from the phone system if it is needed.</span></div>
+    </div>
+
+    <div class="finding warn">
+      <div class="f-top"><span class="f-id">10</span><span class="chip warn">Conflict</span></div>
+      <p class="f-title">Create date is annotated as the time the call took place</p>
+      <p class="f-body">The workbook's note on <code>hs_createdate</code> says HubSpot defines it as "the date and time the call took place", directly opposite the note on <code>hs_timestamp</code> in the row above it. The portal's own description settles it: create date is when the engagement record was created, and it is read-only. On a backfill this will be the migration date, not the call date.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX note</span><span class="src-t">Create date — "the date and time the call took place"</span></div>
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t">"The date that an engagement was created" · Read only: True</span></div>
+        <div class="src"><span class="src-l">Effect</span><span class="src-t">Any report grouped on create date will be wrong for migrated calls</span></div>
+      </div>
+    </div>
+
+    <div class="finding warn">
+      <div class="f-top"><span class="f-id">11</span><span class="chip warn">Conflict</span></div>
+      <p class="f-title">The value that reveals the report sub-categories is named two ways</p>
+      <p class="f-body">The conditional logic keys off one exact enum value, and the two documents disagree on what it is — and the workbook disagrees with itself, since its note says "Portal Reports" while the mock-up screen shows the selected value as "SHP Portal Reports". A mismatch here means the sub-category fields never appear.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">"based on selection of '<strong>Portal Reports</strong>' in SHP Support Category"</span></div>
+        <div class="src"><span class="src-l">PDF mock-up</span><span class="src-t">"If '<strong>SHP Portal Reports</strong>' is value in the Support Ticket 'SHP Support Category' property"</span></div>
+        <div class="src"><span class="src-l">Needed</span><span class="src-t">The internal value from SHP's ticket object, not the label</span></div>
+      </div>
+    </div>
+
+    <div class="finding warn">
+      <div class="f-top"><span class="f-id">12</span><span class="chip warn">Conflict</span></div>
+      <p class="f-title">The report category property is SNF-specific but the design covers both segments</p>
+      <p class="f-body">Routing sends tickets to either the SNF or the HH/HOS pipeline, and the mock-up says report category values vary by segment. But only one report-category property exists in the mapping and its internal name is scoped to SNF. Either it is misnamed, or the HH/HOS counterpart is missing from the mapping.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">SHP Portal Report Category · <code>portal_report_category_snf</code></span></div>
+        <div class="src"><span class="src-l">PDF mock-up</span><span class="src-t">"conditionally displays values based on 'Segment Type'"</span></div>
+        <div class="src"><span class="src-l">Scope</span><span class="src-t">Two pipelines in play: HH/HOS and SNF</span></div>
+      </div>
+    </div>
+
+    <div class="finding warn">
+      <div class="f-top"><span class="f-id">13</span><span class="chip warn">Conflict</span></div>
+      <p class="f-title">Who picks the company on a new contact — the system or the rep?</p>
+      <p class="f-body">The two documents describe opposite directions of association for the unknown-caller flow. It matters because on an unanswered or unknown call there may be no company to inherit.</p>
+      <div class="sources two">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">"Once saved, associate the new contact to the call's associated Company"</span></div>
+        <div class="src"><span class="src-l">PDF mock-up</span><span class="src-t">"HubSpot Company record look-up. Associate to Contact saved" — the rep searches and picks</span></div>
+      </div>
+    </div>
+
+    <div class="finding warn">
+      <div class="f-top"><span class="f-id">14</span><span class="chip warn">Conflict</span></div>
+      <p class="f-title">New-contact fields appear in the known-caller flow too</p>
+      <p class="f-body">The workbook restricts first name, last name, phone and email to calls with no matching contact. The mock-ups show an Edit control on the known-caller card that opens exactly those fields, for the case where the phone-number match is wrong. The workbook's rule is too narrow to build from.</p>
+      <div class="sources two">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">"Only display on pop-up if call is not associated with existing contact in HubSpot"</span></div>
+        <div class="src"><span class="src-l">PDF mock-up</span><span class="src-t">"Edit contact match made from the phone number… present look-up search box" → Existing Contact Search <em>and</em> Add New Contact</span></div>
+      </div>
+    </div>
+
+    <div class="finding warn">
+      <div class="f-top"><span class="f-id">15</span><span class="chip warn">Conflict</span></div>
+      <p class="f-title">Duration is specified for display but absent from the form</p>
+      <p class="f-body">The workflow asks for a live timer on the pop-up. Neither mock-up has a duration field — both show only From, To, Direction, Activity Date, Call and Meeting Type, Call Outcome and Notes — and the workbook files duration under backend properties not shown on the pop-up. Note also that the stored value is in <strong>milliseconds</strong>, so a timer reading in seconds needs converting on save.</p>
+      <div class="sources">
+        <div class="src"><span class="src-l">PDF workflow</span><span class="src-t">"Display Duration as live timer from call answer and save total to Call activity"</span></div>
+        <div class="src"><span class="src-l">PDF mock-ups</span><span class="src-t">No duration field on either screen</span></div>
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t"><code>hs_call_duration</code> — "duration of the call, in milliseconds" · writable</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Missing, unspecified, or unresolved</h2>
+      <span class="sec-count">Items 16–24</span>
+    </div>
+    <p class="sec-intro">Nothing here contradicts anything — it simply is not written down anywhere in the two documents, and each one blocks a build decision.</p>
+
+    <div class="finding info">
+      <div class="f-top"><span class="f-id">16</span><span class="chip info">Gap</span></div>
+      <p class="f-title">The phone system is never named</p>
+      <p class="f-body">Both documents defer repeatedly to "values mapped from phone system", and the workbook hints the platform is changing — "Future use with the new phone system?" against the transcript flag. Everything feasibility-critical hangs on this: whether there is an answered event to trigger the pop-up, whether the hunt group or support line is exposed on the inbound leg, whether a voicemail recording URL is retrievable, and whether a call-answered webhook exists to start the timer.</p>
+      <div class="ask"><span class="ask-l">Blocking</span><span>Name the platform and confirm its API exposes answer events, line identity, and voicemail URLs. Until then the pop-up trigger is undesigned.</span></div>
+    </div>
+
+    <div class="finding info">
+      <div class="f-top"><span class="f-id">17</span><span class="chip info">Gap</span></div>
+      <p class="f-title">No support-line to pipeline mapping table exists</p>
+      <p class="f-body">Routing is specified in prose — SNF support line to the SNF pipeline, HH/HOS support line to the HH/HOS pipeline, direct dial to neither — but no document lists the actual numbers. This table is a prerequisite for items 8, 12 and 24, and only SHP can supply it.</p>
+      <div class="ask"><span class="ask-l">Request</span><span>Every support DID and hunt-group number, mapped to its segment and pipeline.</span></div>
+    </div>
+
+    <div class="finding info">
+      <div class="f-top"><span class="f-id">18</span><span class="chip info">Gap</span></div>
+      <p class="f-title">Ticket pipeline, stage, subject and owner are never mapped</p>
+      <p class="f-body">The ticket rules describe pipeline routing and assignment, yet the mapping's ticket section contains only the four category properties. There are no rows for the pipeline itself, the starting status, the ticket subject line, or the ticket owner — despite the workflow instructing that the ticket be assigned to the employee taking the call, and set to Unassigned when the call went unanswered.</p>
+      <div class="ask"><span class="ask-l">Add</span><span>Rows for pipeline, status, subject convention and owner. Also decide the call and ticket title formats — <code>hs_call_title</code> is writable but no convention is given.</span></div>
+    </div>
+
+    <div class="finding info">
+      <div class="f-top"><span class="f-id">19</span><span class="chip info">Gap</span></div>
+      <p class="f-title">Unanswered calls produce tickets nobody can complete</p>
+      <p class="f-body">The workflow triggers no pop-up for unanswered calls, known or unknown, but still creates a ticket. With no pop-up there is no rep input, so the category can never be set — the instruction to "set ticket category, if known" can never be satisfied on this branch. For unanswered and unknown together the ticket has no contact, no company, no category and no owner.</p>
+      <p class="f-body">In practice that means <strong>a blank ticket for every missed call, wrong number and robocall</strong> that reaches a support line.</p>
+      <div class="ask"><span class="ask-l">Recommend</span><span>Create on voicemail-left only, or auto-close no-answer tickets on a timer. Confirm which with Pedro before build.</span></div>
+    </div>
+
+    <div class="finding info">
+      <div class="f-top"><span class="f-id">20</span><span class="chip info">Gap</span></div>
+      <p class="f-title">Outbound calls have no workflow</p>
+      <p class="f-body">The mapping describes outbound behaviour for the number fields, and the assignment rule covers the employee "accepting <em>or placing</em>" the call — but the only diagram is titled Incoming Support Call Workflow and branches solely on answered and unanswered inbound. Whether an outbound call raises the pop-up, and whether it can create a ticket, is undefined.</p>
+    </div>
+
+    <div class="finding info">
+      <div class="f-top"><span class="f-id">21</span><span class="chip info">Gap</span></div>
+      <p class="f-title">Call status has no rule, and the outcome list is unverified</p>
+      <p class="f-body">Only Call Outcome gets values in the workflow. <code>hs_call_status</code> sits in the backend block with no instruction, though it is writable and is the property that actually distinguishes Completed from Missed, No Answer and Busy — the same distinction item 5 shows cannot come from answer status.</p>
+      <p class="f-body">Separately, the portal export shows <strong>no options defined</strong> for Call Outcome, while the mapping lists six. "Wrong number" in particular is not a HubSpot default, so at least one value needs creating.</p>
+      <div class="sources two">
+        <div class="src"><span class="src-l">XLSX mapping</span><span class="src-t">Busy · Connected · Left live message · Left voicemail · No answer · Wrong number</span></div>
+        <div class="src authority"><span class="src-l">Portal</span><span class="src-t"><code>hs_call_disposition</code> · Options column empty · External options: True</span></div>
+      </div>
+    </div>
+
+    <div class="finding info">
+      <div class="f-top"><span class="f-id">22</span><span class="chip info">Gap</span></div>
+      <p class="f-title">Segment Type is required by the logic but missing from the mapping</p>
+      <p class="f-body">The mock-ups make report-category values conditional on Segment Type, which appears nowhere in the property mapping — not on the ticket, the company, or the call. Which object holds it, and whether the pop-up must read it at call time, is unanswered.</p>
+    </div>
+
+    <div class="finding info">
+      <div class="f-top"><span class="f-id">23</span><span class="chip info">Gap</span></div>
+      <p class="f-title">Required fields and association labels are only in the mock-ups</p>
+      <p class="f-body">The deck marks Call and Meeting Type, Call Outcome, SHP Support Category and the sub-categories as required with an asterisk; the mapping records no required-versus-optional state at all. The known-caller card also shows "Contact label: Primary", implying association labels on the call-to-contact link, which the mapping does not carry.</p>
+      <p class="f-body">Required-ness also collides with item 19: fields cannot be mandatory on a form that never opens.</p>
+    </div>
+
+    <div class="finding info">
+      <div class="f-top"><span class="f-id">24</span><span class="chip info">Gap</span></div>
+      <p class="f-title">Four open questions and some housekeeping the sheet is carrying</p>
+      <p class="f-body">Left unresolved in the workbook's own notes: whether a call placed or answered from the help desk creates a ticket; whether the Dynamics Call Reason needs a synced property on the call activity; and which items are phase 2 — transcript and call summary are annotated as future use but sit in the phase-1 mapping.</p>
+      <p class="f-body">Housekeeping worth fixing while the sheet is open: <code>hs_call_has_transcript</code>, <code>hs_createdate</code> and <code>hs_created_by_user_id</code> each appear <strong>twice</strong> in the mapping with different notes; the Call and Meeting Type list contains near-duplicates "AM -Introduction - Call" and "AM - Introduction Call"; <code>enterprise_number_unique_2</code> carries a <code>_2</code> suffix that usually means an earlier property took the name, so confirm it is the live one; and Dynamics <em>Regarding</em> is mapped only to Company, though it can point at a case or other entity and those references would be dropped.</p>
+    </div>
+  </section>
+
+  <div class="close">
+    <h2>What I would settle first</h2>
+    <ol class="next">
+      <li><strong>Name the phone platform</strong> (16) — it decides whether the pop-up trigger, the live timer, and hunt-group detection are buildable at all.</li>
+      <li><strong>Rule on direct-dial ticket creation</strong> (8) and <strong>unanswered-call tickets</strong> (19) — these two shape the ticket volume SHP lives with every day.</li>
+      <li><strong>Get the support-line table</strong> (17) — nothing about routing can be built without it.</li>
+      <li><strong>Strip the seven read-only writes</strong> (1–7) from the mapping and re-issue it, so the build sheet stops describing impossible behaviour.</li>
+      <li><strong>Pin the exact enum values</strong> for support category and its sub-categories (11, 12, 21) from the live ticket object rather than from either document.</li>
+    </ol>
+  </div>
+
+  <footer>Reconciled from Call Integration Property Details.xlsx (45 mapped rows, 49-property portal export) and HubSpot Call Integration: Popup and Workflow.pdf. Pedro's requirements were not available at review time — see the note at the top.</footer>
+
+</div>
