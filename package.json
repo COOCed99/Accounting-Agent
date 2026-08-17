@@ -1,0 +1,30 @@
+{
+  "name": "runway",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal cash flow projection. Local only, single user, Plaid connected.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "migrate": "node server/db/migrate.js",
+    "start": "node server/index.js",
+    "dev": "concurrently -n server,client -c blue,magenta \"node --watch server/index.js\" \"npm run dev --prefix client\"",
+    "dev:server": "node --watch server/index.js",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "test": "node --test server/engine/*.test.js",
+    "export:fixtures": "node server/db/export-fixtures.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "node-cron": "^3.0.3",
+    "plaid": "^31.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

@@ -1,0 +1,71 @@
+[
+  { "id": "tx_0001", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-01", "name": "PENNYMAC CASH  MTG PYMT 250601", "merchant_name": "Pennymac", "amount": 3516.35, "plaid_category": "LOAN_PAYMENTS_MORTGAGE_PAYMENT" },
+  { "id": "tx_0002", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-02", "name": "ACHIEVE(CFTPAY) DEBIT 250602", "merchant_name": null, "amount": 725.00, "plaid_category": "LOAN_PAYMENTS_OTHER_PAYMENT" },
+  { "id": "tx_0003", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-04", "name": "RETREAT HOMEOWNERS ASSN DUES", "merchant_name": null, "amount": 400.00, "plaid_category": "RENT_AND_UTILITIES_RENT" },
+  { "id": "tx_0004", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-04", "name": "CARMAX AUTO FINANCING PAYMENT", "merchant_name": "CarMax", "amount": 612.44, "plaid_category": "LOAN_PAYMENTS_CAR_PAYMENT" },
+  { "id": "tx_0005", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-04", "name": "GM FINANCIAL PAYMENT 250604", "merchant_name": "GM Financial", "amount": 198.00, "plaid_category": "LOAN_PAYMENTS_CAR_PAYMENT" },
+  { "id": "tx_0006", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-04", "name": "STATE FARM INSURANCE AUTOPAY", "merchant_name": "State Farm", "amount": 476.03, "plaid_category": "GENERAL_SERVICES_INSURANCE" },
+  { "id": "tx_0007", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-04", "name": "SUNNOVA SOLAR LEASE PMT", "merchant_name": "Sunnova", "amount": 100.00, "plaid_category": "RENT_AND_UTILITIES_OTHER_UTILITIES" },
+  { "id": "tx_0008", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-04", "name": "SOUTHERN CALIFORNIA GAS CO", "merchant_name": "SoCalGas", "amount": 38.12, "plaid_category": "RENT_AND_UTILITIES_GAS_AND_ELECTRICITY" },
+  { "id": "tx_0009", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-04", "name": "ZALES CREDIT PLAN PAYMENT", "merchant_name": "Zales", "amount": 228.00, "plaid_category": "LOAN_PAYMENTS_OTHER_PAYMENT" },
+  { "id": "tx_0010", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-04", "name": "CHASE CARD SERVICES EPAY", "merchant_name": "Chase", "amount": 475.00, "plaid_category": "LOAN_PAYMENTS_CREDIT_CARD_PAYMENT" },
+
+  { "id": "tx_0011", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-02", "name": "FUNDBOX ACH DEBIT", "merchant_name": "Fundbox", "amount": 160.15, "plaid_category": "LOAN_PAYMENTS_OTHER_PAYMENT" },
+  { "id": "tx_0012", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-09", "name": "FUNDBOX ACH DEBIT", "merchant_name": "Fundbox", "amount": 160.15, "plaid_category": "LOAN_PAYMENTS_OTHER_PAYMENT" },
+  { "id": "tx_0013", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-16", "name": "FUNDBOX ACH DEBIT", "merchant_name": "Fundbox", "amount": 160.15, "plaid_category": "LOAN_PAYMENTS_OTHER_PAYMENT" },
+
+  { "id": "tx_0014", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-08", "name": "SO CAL EDISON PAYMENTS", "merchant_name": "Southern California Edison", "amount": 214.87, "plaid_category": "RENT_AND_UTILITIES_GAS_AND_ELECTRICITY" },
+  { "id": "tx_0015", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-13", "name": "AMERICAN EXPRESS ACH PMT", "merchant_name": "American Express", "amount": 1200.00, "plaid_category": "LOAN_PAYMENTS_CREDIT_CARD_PAYMENT" },
+  { "id": "tx_0016", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-14", "name": "MOHELA STUDENT LN PYMT", "merchant_name": "MOHELA", "amount": 183.91, "plaid_category": "LOAN_PAYMENTS_STUDENT_LOAN_PAYMENT" },
+  { "id": "tx_0017", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-16", "name": "MAZDA FINANCIAL SERVICES", "merchant_name": "Mazda Financial", "amount": 400.00, "plaid_category": "LOAN_PAYMENTS_CAR_PAYMENT" },
+  { "id": "tx_0018", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-18", "name": "DEPT EDUCATION STUDENT LN", "merchant_name": null, "amount": 410.00, "plaid_category": "LOAN_PAYMENTS_STUDENT_LOAN_PAYMENT" },
+  { "id": "tx_0019", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-20", "name": "SPECTRUM SPECTRUM PAYMENT", "merchant_name": "Spectrum", "amount": 175.80, "plaid_category": "RENT_AND_UTILITIES_INTERNET_AND_CABLE" },
+  { "id": "tx_0020", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-27", "name": "SPECTRUM MOBILE PAYMENT", "merchant_name": "Spectrum Mobile", "amount": 105.70, "plaid_category": "RENT_AND_UTILITIES_TELEPHONE" },
+
+  { "id": "tx_0021", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-15", "name": "PANCREATIC PAYROLL DIRECT DEP", "merchant_name": null, "amount": -5096.61, "plaid_category": "INCOME_WAGES" },
+  { "id": "tx_0022", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-30", "name": "BAMBOOHR PAYROLL DIRECT DEP", "merchant_name": null, "amount": -5096.61, "plaid_category": "INCOME_WAGES" },
+  { "id": "tx_0023", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-11", "name": "NUAGECONCEPTSCOM PAYMENT ACH", "merchant_name": null, "amount": -2400.00, "plaid_category": "INCOME_OTHER_INCOME" },
+  { "id": "tx_0024", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-24", "name": "AI PROJECT PARTNERS LLC XFER", "merchant_name": null, "amount": -1800.00, "plaid_category": "INCOME_OTHER_INCOME" },
+  { "id": "tx_0025", "account_id": "acc_chk", "is_pending": 0, "date": "2026-07-08", "name": "PAYPAL TRANSFER FROM DO IT CONSULTING", "merchant_name": "PayPal", "amount": -950.00, "plaid_category": "INCOME_OTHER_INCOME" },
+
+  { "id": "tx_0026", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-01", "name": "WAY2SAVE SAVINGS TRANSFER", "merchant_name": null, "amount": 500.00, "plaid_category": "TRANSFER_OUT_SAVINGS" },
+  { "id": "tx_0027", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-16", "name": "WAY2SAVE SAVINGS TRANSFER", "merchant_name": null, "amount": 500.00, "plaid_category": "TRANSFER_OUT_SAVINGS" },
+  { "id": "tx_0028", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-19", "name": "ONLINE TRANSFER FROM HOLMES C SAVINGS", "merchant_name": null, "amount": -1200.00, "plaid_category": "TRANSFER_IN_ACCOUNT_TRANSFER" },
+  { "id": "tx_0029", "account_id": "acc_chk", "is_pending": 0, "date": "2026-06-26", "name": "ONLINE TRANSFER TO HOLMES C SAVINGS", "merchant_name": null, "amount": 800.00, "plaid_category": "TRANSFER_OUT_ACCOUNT_TRANSFER" },
+
+  { "id": "tx_0030", "account_id": "acc_chk", "is_pending": 0, "date": "2026-07-19", "name": "PECHANGA RESORT CASINO ATM", "merchant_name": null, "amount": 503.00, "plaid_category": "TRANSFER_OUT_WITHDRAWAL" },
+  { "id": "tx_0031", "account_id": "acc_chk", "is_pending": 0, "date": "2026-07-20", "name": "SAN MANUEL CASINO ATM WITHDRAWAL", "merchant_name": null, "amount": 803.00, "plaid_category": "TRANSFER_OUT_WITHDRAWAL" },
+  { "id": "tx_0032", "account_id": "acc_chk", "is_pending": 0, "date": "2026-07-26", "name": "NON-WF ATM WITHDRAWAL LAS VEGAS BLVD", "merchant_name": null, "amount": 1003.00, "plaid_category": "TRANSFER_OUT_WITHDRAWAL" },
+  { "id": "tx_0033", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-02", "name": "CASMIX LAS VEGAS NV", "merchant_name": null, "amount": 402.50, "plaid_category": "TRANSFER_OUT_WITHDRAWAL" },
+  { "id": "tx_0034", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-05", "name": "NVNYKX ATM SURCHARGE WITHDRAWAL", "merchant_name": null, "amount": 305.00, "plaid_category": "TRANSFER_OUT_WITHDRAWAL" },
+  { "id": "tx_0035", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-09", "name": "CAPRAX RENO NV ATM", "merchant_name": null, "amount": 604.00, "plaid_category": "TRANSFER_OUT_WITHDRAWAL" },
+
+  { "id": "tx_0036", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-03", "name": "ATM WITHDRAWAL 08/03 TEMECULA CA", "merchant_name": null, "amount": 200.00, "plaid_category": "TRANSFER_OUT_WITHDRAWAL" },
+  { "id": "tx_0037", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-11", "name": "NON-WF ATM WITHDRAWAL MURRIETA CA", "merchant_name": null, "amount": 303.00, "plaid_category": "TRANSFER_OUT_WITHDRAWAL" },
+
+  { "id": "tx_0038", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-04", "name": "CASH APP*CEDRICK H", "merchant_name": "Cash App", "amount": 450.00, "plaid_category": "TRANSFER_OUT_ACCOUNT_TRANSFER" },
+  { "id": "tx_0039", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-07", "name": "ZELLE TO J RIVERA", "merchant_name": null, "amount": 600.00, "plaid_category": "TRANSFER_OUT_ACCOUNT_TRANSFER" },
+  { "id": "tx_0040", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-12", "name": "ZELLE TO M HOLMES", "merchant_name": null, "amount": 350.00, "plaid_category": "TRANSFER_OUT_ACCOUNT_TRANSFER" },
+
+  { "id": "tx_0041", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-06", "name": "APPLECARD GSBANK PAYMENT", "merchant_name": "Apple Card", "amount": 720.00, "plaid_category": "LOAN_PAYMENTS_CREDIT_CARD_PAYMENT" },
+  { "id": "tx_0042", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-08", "name": "GLF*ROGER DUNN GOLF SHOPS", "merchant_name": "Roger Dunn", "amount": 289.99, "plaid_category": "GENERAL_MERCHANDISE_SPORTING_GOODS" },
+  { "id": "tx_0043", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-10", "name": "TOPGOLF ONTARIO CA", "merchant_name": "Topgolf", "amount": 142.00, "plaid_category": "ENTERTAINMENT_SPORTING_EVENTS" },
+  { "id": "tx_0044", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-13", "name": "THE TOLL ROADS ACCOUNT REPLENISH", "merchant_name": "The Toll Roads", "amount": 40.00, "plaid_category": "TRANSPORTATION_TOLLS" },
+
+  { "id": "tx_0045", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-02", "name": "CHICK-FIL-A #02471", "merchant_name": "Chick-fil-A", "amount": 34.18, "plaid_category": "FOOD_AND_DRINK_FAST_FOOD" },
+  { "id": "tx_0046", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-05", "name": "IN-N-OUT BURGER 234", "merchant_name": "In-N-Out Burger", "amount": 22.45, "plaid_category": "FOOD_AND_DRINK_FAST_FOOD" },
+  { "id": "tx_0047", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-09", "name": "CHEESECAKE FACTORY TEMECULA", "merchant_name": "The Cheesecake Factory", "amount": 128.60, "plaid_category": "FOOD_AND_DRINK_RESTAURANT" },
+  { "id": "tx_0048", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-12", "name": "CHEVRON 0094521", "merchant_name": "Chevron", "amount": 86.40, "plaid_category": "TRANSPORTATION_GAS" },
+  { "id": "tx_0049", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-14", "name": "COSTCO GAS #1084", "merchant_name": "Costco", "amount": 74.22, "plaid_category": "TRANSPORTATION_GAS" },
+  { "id": "tx_0050", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-15", "name": "TARGET 00021845", "merchant_name": "Target", "amount": 212.33, "plaid_category": "GENERAL_MERCHANDISE_SUPERSTORES" },
+
+  { "id": "tx_0051", "account_id": "acc_chk", "is_pending": 1, "date": "2026-08-16", "name": "PECHANGA RESORT CASINO ATM", "merchant_name": null, "amount": 402.00, "plaid_category": "TRANSFER_OUT_WITHDRAWAL" },
+  { "id": "tx_0052", "account_id": "acc_chk", "is_pending": 1, "date": "2026-08-16", "name": "CHEVRON 0094521", "merchant_name": "Chevron", "amount": 61.10, "plaid_category": "TRANSPORTATION_GAS" },
+
+  { "id": "tx_0053", "account_id": "acc_chk", "is_pending": 0, "date": "2026-07-01", "name": "PENNYMAC CASH  MTG PYMT 250701", "merchant_name": "Pennymac", "amount": 3516.35, "plaid_category": "LOAN_PAYMENTS_MORTGAGE_PAYMENT" },
+  { "id": "tx_0054", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-01", "name": "PENNYMAC CASH  MTG PYMT 250801", "merchant_name": "Pennymac", "amount": 3516.35, "plaid_category": "LOAN_PAYMENTS_MORTGAGE_PAYMENT" },
+  { "id": "tx_0055", "account_id": "acc_chk", "is_pending": 0, "date": "2026-07-14", "name": "ACHIEVE(CFTPAY) DEBIT 250714", "merchant_name": null, "amount": 725.00, "plaid_category": "LOAN_PAYMENTS_OTHER_PAYMENT" },
+  { "id": "tx_0056", "account_id": "acc_chk", "is_pending": 0, "date": "2026-07-28", "name": "ACHIEVE(CFTPAY) DEBIT 250728", "merchant_name": null, "amount": 725.00, "plaid_category": "LOAN_PAYMENTS_OTHER_PAYMENT" },
+  { "id": "tx_0057", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-11", "name": "ACHIEVE(CFTPAY) DEBIT 250811", "merchant_name": null, "amount": 725.00, "plaid_category": "LOAN_PAYMENTS_OTHER_PAYMENT" },
+  { "id": "tx_0058", "account_id": "acc_chk", "is_pending": 0, "date": "2026-08-15", "name": "PANCREATIC PAYROLL DIRECT DEP", "merchant_name": null, "amount": -5096.61, "plaid_category": "INCOME_WAGES" }
+]

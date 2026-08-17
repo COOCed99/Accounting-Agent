@@ -1,0 +1,12 @@
+.env
+data/
+node_modules/
+
+# build output
+client/dist/
+
+# fixtures exported from real account data — never commit
+server/engine/__fixtures__/transactions.real.json
+
+*.log
+.DS_Store
