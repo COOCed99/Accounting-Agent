@@ -1,14 +1,13 @@
-<title>SHP Call Integration Review</title>
+<title>SHP Call Workflow Build Status</title>
 <style>
   :root {
     --ground:#F2F5F3; --surface:#FFFFFF; --surface-2:#E9EEEB;
     --ink:#141A19; --ink-2:#46534F; --ink-3:#6E7C78; --rule:#D3DBD7;
-    --accent:#0F6E63; --accent-soft:#DCEBE7;
-    --live:#0F6E63; --live-soft:#DCEBE7;
-    --auto:#34557A; --auto-soft:#E1E9F2;
-    --partial:#8A6208; --partial-soft:#F6EDD9;
-    --none:#9E2B1C; --none-soft:#F6E3DF;
-    --unk:#5A5F6E; --unk-soft:#E7E8EC;
+    --accent:#0F6E63;
+    --done:#0F6E63; --done-soft:#DCEBE7;
+    --diff:#34557A; --diff-soft:#E1E9F2;
+    --todo:#9E2B1C; --todo-soft:#F6E3DF;
+    --ask:#8A6208; --ask-soft:#F6EDD9;
     --font-display: ui-serif, Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
     --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
@@ -17,23 +16,21 @@
     :root:not([data-theme="light"]) {
       --ground:#0D1312; --surface:#141C1A; --surface-2:#1D2725;
       --ink:#E7ECE9; --ink-2:#A9B6B2; --ink-3:#7E8C88; --rule:#2A3733;
-      --accent:#46B7A6; --accent-soft:#14312D;
-      --live:#46B7A6; --live-soft:#14312D;
-      --auto:#8DB2D8; --auto-soft:#172533;
-      --partial:#DFB25C; --partial-soft:#2E2413;
-      --none:#E4897A; --none-soft:#331914;
-      --unk:#A3A8B5; --unk-soft:#212530;
+      --accent:#46B7A6;
+      --done:#46B7A6; --done-soft:#14312D;
+      --diff:#8DB2D8; --diff-soft:#172533;
+      --todo:#E4897A; --todo-soft:#331914;
+      --ask:#DFB25C; --ask-soft:#2E2413;
     }
   }
   :root[data-theme="dark"] {
     --ground:#0D1312; --surface:#141C1A; --surface-2:#1D2725;
     --ink:#E7ECE9; --ink-2:#A9B6B2; --ink-3:#7E8C88; --rule:#2A3733;
-    --accent:#46B7A6; --accent-soft:#14312D;
-    --live:#46B7A6; --live-soft:#14312D;
-    --auto:#8DB2D8; --auto-soft:#172533;
-    --partial:#DFB25C; --partial-soft:#2E2413;
-    --none:#E4897A; --none-soft:#331914;
-    --unk:#A3A8B5; --unk-soft:#212530;
+    --accent:#46B7A6;
+    --done:#46B7A6; --done-soft:#14312D;
+    --diff:#8DB2D8; --diff-soft:#172533;
+    --todo:#E4897A; --todo-soft:#331914;
+    --ask:#DFB25C; --ask-soft:#2E2413;
   }
 
   * { box-sizing:border-box; }
@@ -41,12 +38,11 @@
     font-family:var(--font-ui); font-size:16px; line-height:1.55; -webkit-text-size-adjust:100%; }
   .wrap { max-width:54rem; margin:0 auto; padding:2rem 1.15rem 5rem; }
 
-  /* masthead */
   .masthead { padding-bottom:1.4rem; border-bottom:2px solid var(--ink); display:flex; flex-direction:column; gap:.85rem; }
   .eyebrow { font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:650; }
   h1 { font-family:var(--font-display); font-weight:600; font-size:clamp(1.85rem,5.6vw,2.75rem);
        line-height:1.1; margin:0; text-wrap:balance; letter-spacing:-.01em; }
-  .standfirst { margin:0; color:var(--ink-2); font-size:1.02rem; max-width:46ch; }
+  .standfirst { margin:0; color:var(--ink-2); font-size:1.02rem; max-width:47ch; }
   .memo { display:grid; grid-template-columns:auto 1fr; gap:.3rem 1rem; font-size:.83rem; margin-top:.2rem; }
   .memo dt { color:var(--ink-3); text-transform:uppercase; letter-spacing:.08em; font-size:.68rem; font-weight:650; padding-top:.15rem; }
   .memo dd { margin:0; color:var(--ink-2); }
@@ -55,47 +51,40 @@
   section { margin-top:2.9rem; }
   .sec-head { display:flex; align-items:baseline; gap:.7rem; flex-wrap:wrap; padding-bottom:.5rem; border-bottom:1px solid var(--rule); }
   .sec-head h2 { font-size:1.38rem; margin:0; }
-  .sec-num { font-family:var(--font-mono); font-size:.78rem; color:var(--ink-3); font-weight:600; }
+  .sec-num { font-family:var(--font-mono); font-size:.78rem; color:var(--ink-3); font-weight:600; margin-left:auto; }
   .sec-intro { margin:.9rem 0 1.3rem; color:var(--ink-2); font-size:.95rem; }
-  p { margin:0 0 .8rem; }
-  p:last-child { margin-bottom:0; }
+  p { margin:0 0 .8rem; } p:last-child { margin-bottom:0; }
   strong { font-weight:640; }
   code { font-family:var(--font-mono); font-size:.85em; background:var(--surface-2);
          padding:.08em .3em; border-radius:2px; overflow-wrap:break-word; }
-  .num { font-variant-numeric:tabular-nums; }
 
-  /* basis box */
-  .basis { margin:1.6rem 0 0; padding:1.05rem 1.1rem; background:var(--surface);
-           border:1px solid var(--rule); border-left:4px solid var(--accent); border-radius:2px; }
-  .basis h3 { font-family:var(--font-ui); font-size:.93rem; margin:0 0 .5rem; }
-  .basis p { font-size:.9rem; color:var(--ink-2); }
-  .basis ul { margin:.5rem 0 0; padding-left:1.15rem; font-size:.89rem; color:var(--ink-2); display:flex; flex-direction:column; gap:.32rem; }
+  .tally { display:grid; grid-template-columns:repeat(4,1fr); gap:.55rem; margin:1.7rem 0 0; }
+  .tile { background:var(--surface); border:1px solid var(--rule); border-radius:2px; padding:.8rem .85rem; }
+  .tile-n { font-size:1.75rem; font-weight:660; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+  .tile-l { font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); font-weight:650; margin-top:.25rem; }
+  .t-done .tile-n { color:var(--done); }
+  .t-diff .tile-n { color:var(--diff); }
+  .t-todo .tile-n { color:var(--todo); }
+  .t-ask .tile-n { color:var(--ask); }
 
-  /* legend */
-  .legend { display:flex; flex-wrap:wrap; gap:.4rem; margin:1.5rem 0 0; }
-  .pill { font-size:.66rem; letter-spacing:.07em; text-transform:uppercase; font-weight:700;
-          padding:.2rem .45rem; border-radius:2px; white-space:nowrap; }
-  .p-live { background:var(--live-soft); color:var(--live); }
-  .p-auto { background:var(--auto-soft); color:var(--auto); }
-  .p-partial { background:var(--partial-soft); color:var(--partial); }
-  .p-none { background:var(--none-soft); color:var(--none); }
-  .p-unk { background:var(--unk-soft); color:var(--unk); }
-
-  /* ledger */
   .ledger { display:flex; flex-direction:column; gap:.55rem; }
   .row { background:var(--surface); border:1px solid var(--rule); border-left:3px solid var(--rule);
          border-radius:2px; padding:.9rem 1rem; }
-  .row.live { border-left-color:var(--live); }
-  .row.auto { border-left-color:var(--auto); }
-  .row.partial { border-left-color:var(--partial); }
-  .row.none { border-left-color:var(--none); }
-  .row.unk { border-left-color:var(--unk); }
+  .row.done { border-left-color:var(--done); }
+  .row.diff { border-left-color:var(--diff); }
+  .row.todo { border-left-color:var(--todo); }
+  .row.ask { border-left-color:var(--ask); }
   .row-top { display:flex; align-items:center; gap:.55rem; flex-wrap:wrap; margin-bottom:.4rem; }
   .row-cap { font-size:1rem; font-weight:640; letter-spacing:-.005em; margin:0; flex:1 1 14rem; min-width:0; text-wrap:balance; }
   .row-body { font-size:.92rem; color:var(--ink-2); }
   .row-body + .row-body { margin-top:.45rem; }
-  .fill { font-family:var(--font-mono); font-size:.78rem; font-variant-numeric:tabular-nums;
-          color:var(--ink-3); white-space:nowrap; }
+  .pill { font-size:.66rem; letter-spacing:.07em; text-transform:uppercase; font-weight:700;
+          padding:.2rem .45rem; border-radius:2px; white-space:nowrap; }
+  .p-done { background:var(--done-soft); color:var(--done); }
+  .p-diff { background:var(--diff-soft); color:var(--diff); }
+  .p-todo { background:var(--todo-soft); color:var(--todo); }
+  .p-ask { background:var(--ask-soft); color:var(--ask); }
+  .src { font-family:var(--font-mono); font-size:.75rem; color:var(--ink-3); margin-top:.5rem; display:block; overflow-wrap:break-word; }
 
   .delta { display:grid; grid-template-columns:repeat(2,1fr); gap:.5rem; margin-top:.7rem; }
   .cell { background:var(--surface-2); border-radius:2px; padding:.55rem .6rem; min-width:0; }
@@ -104,24 +93,16 @@
   .verdict { margin-top:.7rem; padding-top:.55rem; border-top:1px dashed var(--rule); font-size:.89rem; display:flex; gap:.5rem; }
   .verdict-l { font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; font-weight:700; color:var(--accent); padding-top:.25rem; white-space:nowrap; }
 
-  /* decisions */
-  .decision { background:var(--surface); border:1px solid var(--rule); border-radius:2px; padding:.9rem 1rem; margin-bottom:.6rem; }
-  .decision h3 { font-family:var(--font-ui); font-size:.98rem; margin:0 0 .4rem; font-weight:640; display:flex; gap:.5rem; align-items:baseline; }
-  .d-id { font-family:var(--font-mono); font-size:.76rem; color:var(--ink-3); font-weight:600; }
-  .decision p { font-size:.91rem; color:var(--ink-2); }
-  .opts { display:grid; grid-template-columns:repeat(2,1fr); gap:.5rem; margin-top:.6rem; }
-
-  /* asks */
   ol.asks { margin:0; padding-left:1.35rem; display:flex; flex-direction:column; gap:.6rem; font-size:.95rem; color:var(--ink-2); }
   ol.asks strong { color:var(--ink); }
-  ol.asks code { font-size:.82em; }
-
   footer { margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--rule); font-size:.78rem; color:var(--ink-3); }
 
   @media (max-width:640px) {
-    .delta, .opts { grid-template-columns:1fr; }
+    .tally { grid-template-columns:repeat(2,1fr); }
+    .delta { grid-template-columns:1fr; }
     .memo { grid-template-columns:1fr; gap:.1rem .5rem; }
     .memo dt { padding-top:.4rem; }
+    .sec-num { margin-left:0; width:100%; }
   }
   @media (prefers-reduced-motion:reduce) { * { animation:none !important; transition:none !important; } }
 </style>
@@ -129,91 +110,97 @@
 <div class="wrap">
 
   <header class="masthead">
-    <div class="eyebrow">Build status report</div>
-    <h1>SHP Call Integration Review</h1>
-    <p class="standfirst">What the HubSpot call flow already does today, measured against the pop-up and workflow you specified.</p>
+    <div class="eyebrow">Build status · Avaya IP Office → HubSpot</div>
+    <h1>SHP Call Workflow Build Status</h1>
+    <p class="standfirst">Your incoming support call workflow, checked line by line against what is already implemented in the platform.</p>
     <dl class="memo">
       <dt>To</dt><dd>Pedro Aguilar, Director of Information Technology, SHP</dd>
       <dt>From</dt><dd>Cedrick Holmes, AI Project Partners</dd>
       <dt>Date</dt><dd>17 August 2026</dd>
-      <dt>Re</dt><dd>Call Integration Property Details.xlsx · Popup and Workflow.pdf</dd>
+      <dt>Against</dt><dd>Call Integration Property Details.xlsx · Popup and Workflow.pdf</dd>
     </dl>
   </header>
 
-  <div class="basis">
-    <h3>What this is measured against</h3>
-    <p>Pedro — the headline is that <strong>more of this is already running than your mapping sheet implies</strong>. Your workbook's second tab is an export of all 48 call properties in the portal with a fill-rate column, and that column is a direct readout of what the current call flow populates on real calls. Calls are already landing in HubSpot with numbers, direction, duration and status on essentially every record. The gap is the pop-up and the ticket layer, not the plumbing underneath.</p>
-    <p>Two limits on this report, stated plainly so you can correct us:</p>
-    <ul>
-      <li>Fill rate tells us a property <em>is</em> being populated, not <em>what</em> is populating it. We have not had access to the live portal, the phone platform, or any existing pop-up application — so where we say "live", read it as "the data is there", and the first question below asks you to confirm the source.</li>
-      <li>The export covers the <strong>Calls</strong> object only. Every ticket property in your spec — support category, the report sub-categories, pipeline — cannot be confirmed or denied from it. We have marked those unverified rather than guessing.</li>
-    </ul>
-    <div class="legend">
-      <span class="pill p-live">Live</span>
-      <span class="pill p-auto">Automatic — nothing to build</span>
-      <span class="pill p-partial">Partial</span>
-      <span class="pill p-none">Not built</span>
-      <span class="pill p-unk">Unverified</span>
-    </div>
+  <div class="tally">
+    <div class="tile t-done"><div class="tile-n">13</div><div class="tile-l">Built</div></div>
+    <div class="tile t-diff"><div class="tile-n">3</div><div class="tile-l">Built differently</div></div>
+    <div class="tile t-todo"><div class="tile-n">6</div><div class="tile-l">Not yet built</div></div>
+    <div class="tile t-ask"><div class="tile-n">3</div><div class="tile-l">Need your answer</div></div>
   </div>
 
   <section>
     <div class="sec-head">
-      <h2>Already working</h2>
-      <span class="sec-num">6 capabilities</span>
+      <h2>Already built</h2>
+      <span class="sec-num">13 of your requirements</span>
     </div>
-    <p class="sec-intro">These need no development. They are in your spec and they already happen — the mapping sheet lists them as work, which overstates the build.</p>
+    <p class="sec-intro">Pedro — the short version is that your workflow diagram is already implemented end to end, and the platform is already Avaya-native. The orchestrator was written directly against your diagram; its own header instructs developers not to add behaviour that is not on it.</p>
 
     <div class="ledger">
 
-      <div class="row live">
-        <div class="row-top">
-          <p class="row-cap">Call records with both numbers, direction and duration</p>
-          <span class="pill p-live">Live</span>
-        </div>
-        <p class="row-body">The core of your Call Activity Details panel is already captured on virtually every call: <span class="fill">from 99.61%</span> · <span class="fill">to 99.61%</span> · <span class="fill">direction 99.73%</span> · <span class="fill">duration 98.98%</span>. Duration is stored in milliseconds, so the on-screen timer you asked for is a display concern only — the saved total is already correct.</p>
-        <div class="verdict"><span class="verdict-l">Build</span><span>None. Read these onto the pop-up rather than writing them.</span></div>
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">All four workflow branches</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">Answered/unanswered crossed with known/unknown caller, exactly as your diagram splits them. The branch is a first-class value in both the code and the database, so every call is stamped with which path it took and you can report on the mix.</p>
+        <span class="src">server/call-workflow-service.ts · workflow_branch enum in migrations/0001</span>
       </div>
 
-      <div class="row live">
-        <div class="row-top">
-          <p class="row-cap">Call status, owner, title and activity date</p>
-          <span class="pill p-live">Live</span>
-        </div>
-        <p class="row-body">All four sit at <span class="fill">100%</span>. Call status matters more than the sheet suggests: it is the property that already distinguishes Completed from Missed, No Answer and Busy, and it is fully populated. That makes it the right trigger for your answered / unanswered branch.</p>
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Pop-up on answered calls only</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">The pop-up fires on answer and never on an unanswered call, matching the diagram's "No Pop-up Triggered" leg. Unanswered calls still run the full save-and-associate path without agent input.</p>
       </div>
 
-      <div class="row auto">
-        <div class="row-top">
-          <p class="row-cap">Voicemail detection</p>
-          <span class="pill p-auto">Automatic</span>
-        </div>
-        <p class="row-body">Your workflow says "if VM left, set Voicemail Available to Yes". HubSpot is already doing it — the flag is populated on <span class="fill">99.61%</span> of calls and the voicemail counter on <span class="fill">100%</span>. Both are read-only, so we could not write them even if we wanted to.</p>
-        <div class="verdict"><span class="verdict-l">Good news</span><span>Delete this instruction from the spec. The behaviour you want already exists.</span></div>
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Known caller: contact card from the number lookup</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">The caller's phone number is looked up in HubSpot Contacts, the contact card renders from the match, and the company card is populated from that contact's <strong>primary</strong> company association — the behaviour your mock-up annotates.</p>
       </div>
 
-      <div class="row auto">
-        <div class="row-top">
-          <p class="row-cap">Record source stamping</p>
-          <span class="pill p-auto">Automatic</span>
-        </div>
-        <p class="row-body">The sheet asks us to set record source to "Integration". It is at <span class="fill">100%</span> and read-only — HubSpot stamps it from whichever credential creates the record, so a call written by our connector is labelled as integration-sourced automatically.</p>
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Unknown caller: contact entry and company picker</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">First name, last name and email entry, plus a typeahead company search. On save the contact is created in HubSpot and the chosen company is attached as Primary — the order of operations your mock-up specifies.</p>
       </div>
 
-      <div class="row auto">
-        <div class="row-top">
-          <p class="row-cap">Call source and call location</p>
-          <span class="pill p-auto">Automatic</span>
-        </div>
-        <p class="row-body">Both at <span class="fill">99.61%</span>, both read-only. Call location's four values (CRM, Inbox, Help Desk, Mobile App) are hidden and read-only in your portal, which incidentally answers the open question in your notes — placing or answering from the help desk does not itself create a ticket; it only records where the call happened.</p>
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Live duration timer from answer</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">The pop-up counts up from the answer timestamp, and the total is converted to milliseconds on save, which is the unit HubSpot stores. Unanswered calls save zero.</p>
       </div>
 
-      <div class="row auto">
-        <div class="row-top">
-          <p class="row-cap">Audit stamps and connected counter</p>
-          <span class="pill p-auto">Automatic</span>
-        </div>
-        <p class="row-body">Create date, last modified, created-by and updated-by user IDs, record ID, HubSpot team and connected count are all at <span class="fill">100%</span> and all read-only. One consequence for the Dynamics migration: because these cannot be written, <strong>historical Dynamics audit stamps cannot be preserved</strong> on migrated calls — create date will be the migration date. If that history matters for reporting, it needs custom properties, and that is a scope decision for you.</p>
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Support category sourced live from the ticket object</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">Your requirement was "allow selection of SHP Support Category drop-down values from HubSpot Ticket Object". The dropdown reads the property straight from the ticket object at call time and filters hidden options, so the list can never drift from what SHP maintains in HubSpot. Nothing is hardcoded.</p>
+      </div>
+
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Ticket creation with subject, body and owner</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">Tickets are created with a generated subject that distinguishes support calls from missed ones and flags unknown callers, and a body carrying received time, both numbers, answered state, duration, voicemail state and the agent's notes. The agent taking the call becomes the owner; on an unanswered call no owner is set, which leaves it Unassigned as you specified.</p>
+      </div>
+
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Pipeline routing, HH/HOS versus SNF</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">Routing is data-driven through a rules table, matching on the dialled DID or on the selected support category, then falling back to a configured default and finally to the first pipeline with a loud warning. Because it is data and not code, changing how SHP routes is a configuration change.</p>
+      </div>
+
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Every association on the diagram, including the exception</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">Call to contact, call to ticket, contact to ticket, and the contact's primary company to ticket. Your diagram's parenthetical — "except in case of unanswered + unknown" — is implemented as an explicit branch check, not left to chance.</p>
+      </div>
+
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Avaya IP Office as a first-class provider</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">The provider is modelled through the stack, with the Avaya UCID as the call identifier and configuration for the TAPI line, CTI host, and credentials held per portal. Cloud-only surfaces such as SMS and per-minute billing are hidden automatically when a tenant runs on Avaya.</p>
+      </div>
+
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Voicemail and recording ingest from the appliance</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">Built on the assumption your notes imply: TAPI reports the disconnect but never the media, so the appliance's voicemail and recording directories are watched, files are matched back to the call, and the URL is attached to the call activity. The directories, filename pattern and public base URL are all configuration.</p>
+      </div>
+
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Hunt groups with live agent state</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">Groups, pilot numbers, members and extensions, with each member's current state and live counts of available and on-call agents for supervisors.</p>
+      </div>
+
+      <div class="row done">
+        <div class="row-top"><p class="row-cap">Local call log reconciled to HubSpot</p><span class="pill p-done">Built</span></div>
+        <p class="row-body">Every call is written locally with its HubSpot call, ticket and contact IDs. Deliberately, a local logging failure never fails the HubSpot write — HubSpot is treated as SHP's system of record.</p>
       </div>
 
     </div>
@@ -221,34 +208,29 @@
 
   <section>
     <div class="sec-head">
-      <h2>Working, but not consistently</h2>
-      <span class="sec-num">2 capabilities</span>
+      <h2>Built, but differently from the documents</h2>
+      <span class="sec-num">3 to confirm</span>
     </div>
-    <p class="sec-intro">These exist and reps use them, unevenly. Your spec makes both mandatory — so the work here is enforcement and habit, not integration. Worth knowing before the team is told the pop-up is "just a form".</p>
+    <p class="sec-intro">Three places where the implementation makes a deliberate choice your documents leave contradictory. Each is working; we need you to confirm the choice rather than change code.</p>
 
     <div class="ledger">
 
-      <div class="row partial">
-        <div class="row-top">
-          <p class="row-cap">Call notes</p>
-          <span class="pill p-partial">Partial</span>
-          <span class="fill">76.57%</span>
-        </div>
-        <p class="row-body">Roughly three in four calls already carry notes, so the Notes box on your mock-up formalises something the team mostly does. Expect this to rise once the field is in front of them at call time.</p>
+      <div class="row diff">
+        <div class="row-top"><p class="row-cap">Voicemail Available is a custom property, not the HubSpot one</p><span class="pill p-diff">Confirm</span></div>
+        <p class="row-body">Your sheet maps this to HubSpot's <code>hs_call_has_voicemail</code>, which is <strong>read-only</strong> — HubSpot derives it and the API will not accept a write. Rather than drop the requirement, the platform creates and writes its own <code>voicemail_available</code> property on the call object during onboarding, with Yes/No values, so you get the reporting you asked for.</p>
+        <div class="verdict"><span class="verdict-l">Confirm</span><span>The property name, if SHP wants something other than <code>voicemail_available</code>. It is configurable per portal.</span></div>
       </div>
 
-      <div class="row partial">
-        <div class="row-top">
-          <p class="row-cap">Call outcome</p>
-          <span class="pill p-partial">Partial</span>
-          <span class="fill">42.25%</span>
-        </div>
-        <p class="row-body">Set on fewer than half of calls today, and your pop-up marks it required — so this is a real change in what reps must do on every call, not a technical task.</p>
-        <p class="row-body">There is also a configuration gap: the portal export shows <strong>no options defined</strong> for this property, while your sheet lists six. "Wrong number" in particular is not a HubSpot default, so at least one value needs creating before the dropdown can be built.</p>
-        <div class="delta">
-          <div class="cell"><span class="cell-l">Today</span><span class="cell-t">Optional, used on 42% of calls, options not configured in-portal</span></div>
-          <div class="cell"><span class="cell-l">You want</span><span class="cell-t">Required on every call, six specific values</span></div>
-        </div>
+      <div class="row diff">
+        <div class="row-top"><p class="row-cap">Activity date is the answer time</p><span class="pill p-diff">Confirm</span></div>
+        <p class="row-body">Your documents define this three ways — when logged, call start, and when answered. The build follows the workflow diagram: answer time on answered calls, arrival time on unanswered. Duration is measured from answer, so it is zero on a call that was never picked up.</p>
+        <div class="verdict"><span class="verdict-l">Note</span><span>This conflicts with the workbook's "Actual Start". If time-to-answer reporting matters, say so and we will store both.</span></div>
+      </div>
+
+      <div class="row diff">
+        <div class="row-top"><p class="row-cap">Every call creates a ticket</p><span class="pill p-diff">Needs a ruling</span></div>
+        <p class="row-body">The build follows your mock-ups, which state ticket creation unconditionally. Your workbook says the opposite for direct-extension dials — "If direct extension dial = Do not create ticket" — and that rule is not implemented.</p>
+        <p class="row-body">As it stands, an internal desk-to-desk call would open a support ticket. This is the highest-impact open item in the set and it is question one below.</p>
       </div>
 
     </div>
@@ -256,83 +238,43 @@
 
   <section>
     <div class="sec-head">
-      <h2>Requested but never used</h2>
-      <span class="sec-num">3 capabilities</span>
+      <h2>Not yet built</h2>
+      <span class="sec-num">6 gaps</span>
     </div>
-    <p class="sec-intro">The properties exist in the portal and have never been populated — zero or near-zero fill across all calls. Each is genuinely new behaviour.</p>
+    <p class="sec-intro">Genuine gaps against your specification. Nothing here is difficult; they were not built because the documents leave them ambiguous or because SHP owns the underlying configuration.</p>
 
     <div class="ledger">
 
-      <div class="row none">
-        <div class="row-top">
-          <p class="row-cap">Call and meeting type</p>
-          <span class="pill p-none">Not built</span>
-          <span class="fill">0.00%</span>
-        </div>
-        <p class="row-body">This is the one we would flag hardest. Your pop-up makes it a required field with ten values — Training, Sweeper/Interface, IMP Kickoff, Escalation, Cancellation, Contracts/Billing, Troubleshooting and the rest — and it has <strong>never been set on a single call</strong>. The option list is configured; nobody uses it. Categorising every call by type is new work for the team, and it is the field most likely to be left on its default unless it blocks the save.</p>
-        <p class="row-body">The list also carries a near-duplicate worth cleaning first: "AM -Introduction - Call" and "AM - Introduction Call" both exist.</p>
+      <div class="row todo">
+        <div class="row-top"><p class="row-cap">Call Outcome is not captured</p><span class="pill p-todo">Gap</span></div>
+        <p class="row-body">Your pop-up marks Call Outcome required with six values, and your unanswered branch specifies "No Answer" when the call was not answered and "Left Voicemail" when a message was recorded. The pop-up has no outcome selector today, and <code>hs_call_disposition</code> is never written.</p>
+        <p class="row-body">Call status is set correctly on every call, so the answered/unanswered distinction is safe — but the disposition your reporting will want is missing. Note also that the property currently has <strong>no options defined</strong> in the portal export you sent, and "Wrong number" is not a HubSpot default, so the value list needs creating before the field can be built.</p>
       </div>
 
-      <div class="row none">
-        <div class="row-top">
-          <p class="row-cap">Call recording and voicemail URLs</p>
-          <span class="pill p-none">Not built</span>
-          <span class="fill">9.06%</span>
-        </div>
-        <p class="row-body">Your unanswered-call branch injects the voicemail URL into the recording property. That property is writable — good — but populated on only <span class="fill">9.06%</span> of calls today, so recordings are the exception rather than the rule. Whether your phone platform exposes a retrievable voicemail URL is the open question, and it is question two below.</p>
+      <div class="row todo">
+        <div class="row-top"><p class="row-cap">Call and Meeting Type is not captured</p><span class="pill p-todo">Gap</span></div>
+        <p class="row-body">Also required on your mock-up, with ten values from Training through Troubleshooting. Not on the pop-up and never written. Two things to settle first: the list contains an apparent duplicate — "AM -Introduction - Call" and "AM - Introduction Call" — and the export shows this property has never been populated on any call, so this is new behaviour for the team rather than a habit to preserve.</p>
       </div>
 
-      <div class="row none">
-        <div class="row-top">
-          <p class="row-cap">A Dynamics Call Reason property</p>
-          <span class="pill p-none">Not built</span>
-        </div>
-        <p class="row-body">The only custom property in your call mapping, <code>dynamics_call_reason</code>, is not in the portal export — it has not been created yet. When it is, we would recommend making it a dropdown seeded from the Dynamics option set rather than the single-line text the sheet specifies, since your own note describes the source as a drop-down and free text cannot be reported on cleanly.</p>
+      <div class="row todo">
+        <div class="row-top"><p class="row-cap">The report sub-category cascade</p><span class="pill p-todo">Gap</span></div>
+        <p class="row-body">Only the single support category property is handled. The conditional cascade — selecting Portal Reports exposing SHP Portal Report Category and SHP Reports, with values varying by Segment Type — is not built, and the three sub-properties are not referenced anywhere.</p>
+        <p class="row-body">Two blockers in your documents: the triggering value is written "Portal Reports" in the workbook and "SHP Portal Reports" on the mock-up, and Segment Type appears on the mock-up but in no mapping. A property export from your Tickets object settles both.</p>
       </div>
 
-    </div>
-  </section>
-
-  <section>
-    <div class="sec-head">
-      <h2>The actual build</h2>
-      <span class="sec-num">4 capabilities</span>
-    </div>
-    <p class="sec-intro">None of this is visible in a property export, because none of it is a property — it is application behaviour. This is where the project's effort sits, and where we need you to confirm that nothing already exists.</p>
-
-    <div class="ledger">
-
-      <div class="row unk">
-        <div class="row-top">
-          <p class="row-cap">The pop-up itself</p>
-          <span class="pill p-unk">Unverified</span>
-        </div>
-        <p class="row-body">Screen-pop on an answered call, the contact card from a phone-number lookup, the company card from the contact's primary association, the edit-and-search path when the number matches the wrong person, and the add-new-contact form for unknown callers. We have no evidence for or against any of it.</p>
-        <p class="row-body">We know from your team's Dynamics history that a phone pop-up integration has existed on that side since at least 2024. Whether anything equivalent is already standing in HubSpot is the single biggest unknown in our estimate.</p>
+      <div class="row todo">
+        <div class="row-top"><p class="row-cap">Company owner and Enterprise Number on the pop-up</p><span class="pill p-todo">Gap</span></div>
+        <p class="row-body">Your company card specifies Company Name, Owner and Enterprise Number. The card currently shows name, domain and location. Adding the two missing fields is small — we need confirmation that <code>enterprise_number_unique_2</code> is the live property, since the <code>_2</code> suffix usually means an earlier one claimed the name.</p>
       </div>
 
-      <div class="row unk">
-        <div class="row-top">
-          <p class="row-cap">Automatic ticket creation and routing</p>
-          <span class="pill p-unk">Unverified</span>
-        </div>
-        <p class="row-body">Ticket creation, association of call, contact and company to it, routing into the SNF or HH/HOS pipeline, and assignment to the rep. The Calls export cannot show us any of this — we need the equivalent export from the Tickets object.</p>
+      <div class="row todo">
+        <div class="row-top"><p class="row-cap">Correcting a wrong contact match</p><span class="pill p-todo">Gap</span></div>
+        <p class="row-body">Your known-caller mock-up has an Edit control that opens a contact search when the phone number matched the wrong person, and an Add New Contact path from there. The pop-up lets the agent change the company but not the contact. Worth building — a shared or reassigned number will otherwise log calls against the wrong record.</p>
       </div>
 
-      <div class="row unk">
-        <div class="row-top">
-          <p class="row-cap">The support category cascade</p>
-          <span class="pill p-unk">Unverified</span>
-        </div>
-        <p class="row-body">Support category driving the report sub-categories, and those values varying by Segment Type. Three things we cannot resolve from the documents: the exact value that triggers the cascade is written as "Portal Reports" in the sheet and "SHP Portal Reports" on the mock-up; the report-category property is named <code>portal_report_category_snf</code> though the design covers both SNF and HH/HOS; and Segment Type itself appears on the mock-up but nowhere in the mapping.</p>
-      </div>
-
-      <div class="row none">
-        <div class="row-top">
-          <p class="row-cap">Support-line versus direct-dial detection</p>
-          <span class="pill p-none">Not built</span>
-        </div>
-        <p class="row-body">Everything conditional in your spec keys off whether the call arrived on a support line or a direct extension — whether the ticket section shows, whether a ticket is created at all, which pipeline it lands in. Neither document lists the numbers, so this cannot be built until we have them.</p>
+      <div class="row todo">
+        <div class="row-top"><p class="row-cap">Dynamics Call Reason</p><span class="pill p-todo">Gap</span></div>
+        <p class="row-body"><code>dynamics_call_reason</code> is not referenced anywhere in the platform and does not exist in the portal export. It is only needed if Dynamics call history is being migrated — and if so, we would make it a dropdown seeded from the Dynamics option set rather than the single-line text the sheet specifies, since your own note describes the source as a drop-down.</p>
       </div>
 
     </div>
@@ -340,67 +282,18 @@
 
   <section>
     <div class="sec-head">
-      <h2>Decisions we need from you</h2>
-      <span class="sec-num">4 rulings</span>
-    </div>
-    <p class="sec-intro">Each of these is a place where the two documents give different answers. We are not able to pick for you — they change how the system behaves for your team every day.</p>
-
-    <div class="decision">
-      <h3><span class="d-id">D1</span> Does a direct-extension call create a ticket?</h3>
-      <p>The highest-impact contradiction in the set. Build it the mock-up's way and every internal desk-to-desk call opens a support ticket.</p>
-      <div class="opts">
-        <div class="cell"><span class="cell-l">Your workbook says</span><span class="cell-t">"For Support line(s) = create ticket. If direct extension dial = Do not create ticket"</span></div>
-        <div class="cell"><span class="cell-l">Your mock-ups say</span><span class="cell-t">"Call Activity automatically creates a Support Ticket" — stated unconditionally on both pages, and the unanswered branch has no line-type condition either</span></div>
-      </div>
-      <div class="verdict"><span class="verdict-l">We assume</span><span>The workbook rule is correct — tickets only from support lines. Confirm and we proceed.</span></div>
-    </div>
-
-    <div class="decision">
-      <h3><span class="d-id">D2</span> What should an unanswered call produce?</h3>
-      <p>Your workflow triggers no pop-up for unanswered calls, known caller or unknown, but still creates a ticket. With no pop-up there is no rep input, so the category can never be set — the instruction to "set ticket category, if known" cannot be satisfied on that branch. For unanswered and unknown together, the ticket has no contact, no company, no category and no owner.</p>
-      <p>In practice that means a blank ticket for every missed call, wrong number and robocall that reaches a support line.</p>
-      <div class="opts">
-        <div class="cell"><span class="cell-l">Option A</span><span class="cell-t">Create only when a voicemail is left — the caller has actually asked for something</span></div>
-        <div class="cell"><span class="cell-l">Option B</span><span class="cell-t">Create on every unanswered call, auto-closing untouched ones on a timer</span></div>
-      </div>
-      <div class="verdict"><span class="verdict-l">We recommend</span><span>Option A, and it is the cheaper build.</span></div>
-    </div>
-
-    <div class="decision">
-      <h3><span class="d-id">D3</span> Which moment is the activity date?</h3>
-      <p>Your documents define this timestamp three ways: when the call was logged, the start of the call, and when the call was answered. Any time-to-answer or handling-time report depends on the choice. We suggest call start, so inbound and outbound measure the same way, with answer time derived separately if you need it.</p>
-      <p>Related: the sheet's note on Create date says HubSpot defines it as "the date and time the call took place". It does not — it is when the record was created, and it is read-only. Reports grouped on it will be wrong for any migrated call.</p>
-    </div>
-
-    <div class="decision">
-      <h3><span class="d-id">D4</span> Do outbound calls pop the form?</h3>
-      <p>Your mapping describes outbound behaviour for the number fields and your assignment rule covers the employee "accepting or placing" the call — but the only diagram is titled Incoming Support Call Workflow and branches solely on inbound. Whether an outbound call raises the pop-up, and whether it can open a ticket, is undefined.</p>
-    </div>
-  </section>
-
-  <section>
-    <div class="sec-head">
-      <h2>What we need to finish scoping</h2>
-      <span class="sec-num">5 items</span>
+      <h2>What we need from you</h2>
+      <span class="sec-num">3 answers, 2 exports</span>
     </div>
     <ol class="asks">
-      <li><strong>Name the phone platform, and confirm what its API exposes.</strong> Both documents defer to "values mapped from phone system" without naming it, and your notes hint it is changing — "Future use with the new phone system?". Everything hangs on this: whether there is a call-answered event to trigger the pop-up, whether the support line or hunt group is identifiable on the inbound leg, and whether voicemail recordings can be retrieved by URL.</li>
-      <li><strong>Confirm what is already writing calls into HubSpot.</strong> Call source is populated on 99.61% of calls; its value distribution will tell us whether this is HubSpot's native calling, an existing connector, or an import — and that determines whether we extend what is there or replace it.</li>
-      <li><strong>The support-line table.</strong> Every support DID and hunt-group number, mapped to its segment and its pipeline. Nothing conditional can be built without it.</li>
-      <li><strong>A property export from the Tickets object,</strong> matching the one you sent for Calls. It would confirm the four SHP category properties, their exact option values, Segment Type, and the pipelines — and settle the naming questions above from the live portal rather than from either document.</li>
-      <li><strong>Confirmation that no pop-up application already exists in HubSpot,</strong> or access to it if one does.</li>
+      <li><strong>Does a direct-extension dial create a ticket?</strong> Your two documents disagree and the build currently creates one on every call. This is the one that changes daily ticket volume for your team.</li>
+      <li><strong>How is HH/HOS versus SNF actually determined</strong> — by the inbound DID, by the category the agent picks, or by the caller's company record? The routing engine supports all three; we just need to know which is authoritative. This question is flagged in the code as an open item awaiting your answer.</li>
+      <li><strong>Are voicemail recordings allowed to be reachable from HubSpot?</strong> The ingest supports publishing them, but your callers are home health, hospice and SNF agencies, so those recordings should be assumed to contain PHI. Whether the link is public, expiring, or internal-only is a compliance decision, not a technical one, and we would rather have it in writing now.</li>
+      <li><strong>A property export from the Tickets object</strong>, matching the one you sent for Calls. It settles the category names, the exact cascade trigger value, Segment Type and the pipeline IDs in one step.</li>
+      <li><strong>The support-line table</strong> — every support DID and hunt group pilot number mapped to its segment. The routing rules are data, so this is the last thing standing between configuration and go-live.</li>
     </ol>
   </section>
 
-  <section>
-    <div class="sec-head">
-      <h2>Where that leaves the mapping sheet</h2>
-    </div>
-    <p class="sec-intro">Seven of the properties the sheet asks the integration to write are read-only in your portal, which is why several items above resolve as "already handled" rather than as work: voicemail available, record source, from- and to-number names, inbound answer status, activity created by, and the transcript and summary fields. The likeliest explanation is that the mapping was drawn from HubSpot's full property catalogue without filtering on the read-only column — so the fix is mechanical, not a design argument.</p>
-    <p class="sec-intro">Three smaller items to clean while the sheet is open: <code>hs_call_has_transcript</code>, <code>hs_createdate</code> and <code>hs_created_by_user_id</code> each appear twice with different notes; <code>enterprise_number_unique_2</code> carries a <code>_2</code> suffix that usually means an earlier property claimed the name, so it is worth confirming which one is live; and Dynamics <em>Regarding</em> is mapped only to Company, though it can point at a case or another entity, and those references would be dropped on migration.</p>
-    <p class="sec-intro">Transcript and call summary are annotated in your sheet as future use but sit in the phase-one mapping. We have treated them as phase two. Related, and free: HubSpot's conversation-intelligence properties — talk time, patience, longest monologue — exist in your portal at zero fill. They are not in your spec, but if the new phone platform supports recording, they become available for coaching without extra development.</p>
-  </section>
-
-  <footer>Prepared by AI Project Partners from Call Integration Property Details.xlsx (45 mapped rows, plus a 48-property portal export with fill rates) and HubSpot Call Integration: Popup and Workflow.pdf, both received 17 August 2026. Current-state findings are inferred from the fill-rate column of that export, not from a live audit of the portal, the phone platform, or any existing application.</footer>
+  <footer>Prepared by AI Project Partners. Build status verified against the aipp-call-center codebase at commit 9a3bd86 on 17 August 2026, reconciled against Call Integration Property Details.xlsx and HubSpot Call Integration: Popup and Workflow.pdf. Property constraints cited are from HubSpot's own definitions in the export supplied with those documents.</footer>
 
 </div>
